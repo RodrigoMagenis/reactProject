@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './css/pure-min.css';
 import './css/side-menu.css';
+import $ from 'jquery';
 
 class App extends Component {
 
@@ -8,6 +9,17 @@ class App extends Component {
     super();
     this.state = {lista: []};
   }
+/*http://cdc-react.herokuapp.com/api/autores*/
+ componentWillMount() {
+  $.ajax({
+    url:"http://cdc-react.herokuapp.com/api/autores",
+    dataType: 'json',
+    success:function(resposta) {
+      console.log(this);
+      this.setState({lista:resposta});
+    }.bind(this)
+  })
+ }
 
   render() {
     return (

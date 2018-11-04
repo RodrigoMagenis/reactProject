@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import FormularioAutor      from './FormularioAutor';
 import TabelaAutor          from './TabelaAutor';
-import $ from 'jquery';
+import $                    from 'jquery';
+import PubSub               from 'pubsub-js';
 
 export default class AutorBox extends Component {
 
 	constructor() {
     	super();
     	this.state = {lista: []};
-    	this.setLista = this.setLista.bind(this);
     }
 
 	componentDidMount() {
@@ -18,12 +18,14 @@ export default class AutorBox extends Component {
 	    	success:function(resposta) {
 	      	this.setState({lista:resposta});
 	    	}.bind(this)
-		})
+		});
+		
+		PubSub.subscribe( 'atualiza-lista-autores', function(topico, novaLista) {
+			this.setState({lista:novaLista});
+		}.bind(this));
 	}
 
-	setLista( novaLista ) {
-		this.setState( {lista:novaLista} );
-	}
+
 
 	render() {
 		return (

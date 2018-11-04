@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import InputCustomizado from './../componentes/InputCustomizado';
-import BotaoCustomizado from './../componentes/BotaoCustomizado';
-import $ from 'jquery';
-
+import InputCustomizado     from './../componentes/InputCustomizado';
+import BotaoCustomizado     from './../componentes/BotaoCustomizado';
+import $                    from 'jquery';
+import PubSub               from 'pubsub-js';
+import TratadorErros        from './../tratadorErros/TratadorErros';
 
 export default class FormularioAutor extends Component {
 
@@ -24,13 +25,15 @@ export default class FormularioAutor extends Component {
 	    	dataType: 'json',
 	    	type: 'post',
 	    	data: JSON.stringify({nome:this.state.nome, email:this.state.email, senha:this.state.senha}),
-	    	success: function(resposta) {
+	    	success: function(novalistagem) {
 	      		console.log("sucesso");
-	    		this.props.setLista(resposta); //atualiza a lista
-	    	}.bind(this),
-	    	error: function(resposta) {
-	    		console.log("erro");
-			}.bind(this)
+	      		PubSub.publish('atualiza-lista-autores',novalistagem);
+	    	},
+	    	error: function( resposta ) {
+	    		if(resposta.status === 400 ) { //bad request
+					new TratadorErros().publicaErros(resposta.responseJSON);
+				}
+			}
 		})
 	}
 

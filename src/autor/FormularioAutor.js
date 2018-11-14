@@ -28,11 +28,16 @@ export default class FormularioAutor extends Component {
 	    	success: function(novalistagem) {
 	      		console.log("sucesso");
 	      		PubSub.publish('atualiza-lista-autores',novalistagem);
-	    	},
+	      		this.setState({nome:'', email:'', senha:''});
+	    	}.bind(this),
 	    	error: function( resposta ) {
 	    		if(resposta.status === 400 ) { //bad request
 					new TratadorErros().publicaErros(resposta.responseJSON);
 				}
+			},
+			beforeSend: function(){
+				console.log("entrou beforeSend");
+				PubSub.publish('limpa-erros', {} );
 			}
 		})
 	}
